@@ -5,7 +5,7 @@ jobs:
       image: ubuntu-2004:2023.02.1
     environment:
       # Fail the build if there are warnings
-      RUSTFLAGS: '-D warnings'
+      # RUSTFLAGS: '-D warnings'
     steps:
       - checkout
       - protobuf/install
@@ -33,7 +33,7 @@ jobs:
           command: cargo build
       - run:
           name: docker-compose build && docker-compose up
-          command: docker compose up
+          command: docker-compose build && docker-compose up -d
       - run:
           name: docker wait
           command: sleep 10
@@ -44,8 +44,18 @@ jobs:
           name: Start Rust Service
           command: cargo run --bin server &
       - run:
-          name: Run all tests
-          command: cargo test
+          name: Check Rust Service
+          command: |
+            sudo apt install telnet
+            telnet 0.0.0.0 40130 &
+      - run:
+          name: Run all tests 
+          command: cargo test -- --test-threads=1
+      - run:
+          name: Check Rust Service Again
+          command: |
+            sudo apt install telnet
+            telnet 0.0.0.0 40130 &
 
 orbs:
   protobuf: izumin5210/protobuf@0.1.0

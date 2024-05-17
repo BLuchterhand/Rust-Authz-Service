@@ -11,7 +11,7 @@ use tonic::transport::Server;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (client, connection) = tokio_postgres::connect("postgresql://postgres:postgres@0.0.0.0:5432/postgres", NoTls).await?;
+    let (client, connection) = tokio_postgres::connect("postgresql://postgres:postgres@localhost:5432/postgres", NoTls).await?;
 
     let account_db_client = DBClient::new(client);
     tokio::spawn(async move {
